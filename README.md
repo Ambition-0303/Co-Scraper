@@ -280,7 +280,7 @@ Metrics:
 - **$\mathrm{F1}$**: field-level extraction quality.
 - **$\mathrm{Cor}_p$**: page-level perfect extraction rate.
 - **$\mathrm{Cor}_f$**: field-level cross-page reuse success rate.
-- **$\mathrm{Unex.f}$**: fraction of fields that produce unexecutable or invalid output.
+- **$\mathrm{Unex.}_f$**: fraction of fields that produce unexecutable or invalid output.
 
 This repository does not bundle SWDE or LiveWeb-IE data. Please obtain those datasets
 from their respective sources if you need to reproduce benchmark evaluations.
