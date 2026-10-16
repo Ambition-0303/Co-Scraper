@@ -10,6 +10,7 @@
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](pyproject.toml)
 [![arXiv](https://img.shields.io/badge/arXiv-2606.14821-B31B1B)](https://arxiv.org/abs/2606.14821)
 [![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://huggingface.co/Ambition0303/Qwen-HTML)
+[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-RWDE-FFD21E)](https://huggingface.co/datasets/Ambition0303/RWDE)
 
 *Turn three structurally similar seed pages and a JSON Schema into a reusable, executable `WebPageParser`.*
 
@@ -43,6 +44,19 @@ schema into executable extraction code.
 - **Automatic execution**: runs the generated parser on the three seed pages and saves the results.
 - **OpenAI-compatible**: works with local vLLM, private gateways, or hosted APIs.
 - **No bundled benchmark data**: SWDE and LiveWeb-IE remain separate; no test data or private outputs are redistributed.
+
+---
+
+## 🤗 RWDE dataset
+
+The RWDE webpage information extraction dataset used to train Qwen-HTML is available
+on Hugging Face at [Ambition0303/RWDE](https://huggingface.co/datasets/Ambition0303/RWDE).
+
+RWDE contains 184 sites, 462 page-structure groups, and 643 extraction queries. It
+provides raw and processed HTML, reference XPath locators, node-identification
+artifacts, generated scraper samples, item-level annotations, and field-level ground
+truth for both SFT and RFT. The dataset is released under CC BY 4.0; third-party
+webpage content remains subject to the rights and terms of its original owners.
 
 ---
 
@@ -407,6 +421,9 @@ If you use Co-Scraper, please cite:
   url={https://arxiv.org/abs/2606.14821}
 }
 ```
+
+If you use RWDE, please also reference the [RWDE dataset](https://huggingface.co/datasets/Ambition0303/RWDE)
+together with the Co-Scraper paper.
 
 ---
 
