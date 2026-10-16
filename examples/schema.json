@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "model": {"type": "string"},
+    "price": {"type": "string"}
+  },
+  "required": ["model", "price"],
+  "additionalProperties": false
+}
