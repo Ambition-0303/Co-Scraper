@@ -101,7 +101,7 @@ flowchart LR
 3. **Block segmentation** converts mixed text/tag structures into content blocks.
 4. **Stable IDs** attach `_item_id` values to simplified and mapped representations.
 5. **Node identification** asks the model to return `useful_item_ids` for answer and support nodes.
-6. **Mapping back** preserves useful subtrees, ancestors, short structural siblings, and replaces irrelevant subtrees with `...`.
+6. **Mapping back** preserves useful subtrees, ancestors, short structural siblings, and compacts irrelevant subtrees.
 7. **Scraper synthesis** uses the three pruned pages, query, and schema to generate XPath-based Python code.
 8. **Execution** runs the generated parser on the three seed pages and records each result.
 9. **Reuse** executes the same parser directly on new pages from the same structural group.
