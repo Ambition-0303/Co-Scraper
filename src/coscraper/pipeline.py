@@ -6,8 +6,9 @@ import hashlib
 import json
 import os
 import time
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 from .dom import ITEM_ID_ATTR, _parse_document, extract_main_html, simplify_html
 from .inference import (

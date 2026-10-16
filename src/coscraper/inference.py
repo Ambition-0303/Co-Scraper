@@ -8,7 +8,6 @@ import re
 import time
 from typing import Any
 
-
 DEFAULT_MODEL = "qwen-html"
 THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
 FENCE_RE = re.compile(r"^```(?:python)?\s*|\s*```$", re.DOTALL | re.IGNORECASE)
@@ -184,14 +183,6 @@ def normalize_useful_item_ids(output: str, available_ids: set[str]) -> list[str]
     if unavailable:
         raise PipelineError(f"useful_item_ids not present in mapped HTML: {unavailable}")
     return normalized
-
-
-def available_item_ids(map_html: str) -> set[str]:
-    root = _parse_document(map_html)
-    return {
-        str(item_id)
-        for item_id in root.xpath(f"//*[@{ITEM_ID_ATTR}]/@{ITEM_ID_ATTR}")
-    }
 
 
 def normalize_and_validate_code(output: str) -> str:

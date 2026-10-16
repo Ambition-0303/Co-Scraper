@@ -47,7 +47,7 @@ if __name__ == "__main__":
     monkeypatch.setattr("coscraper.pipeline.inference", fake_inference)
     pages = [
         f"<html><body><h1>Camera {letter}</h1><div class='price'>${value}</div><nav>x</nav></body></html>"
-        for letter, value in zip("ABC", (499, 599, 699))
+        for letter, value in zip("ABC", (499, 599, 699), strict=True)
     ]
     result = run(
         "Extract camera model and price.",

@@ -7,12 +7,12 @@ import logging
 import re
 import uuid
 from collections import Counter, defaultdict
-from functools import lru_cache
-from typing import Any, Callable, Dict, List, Set, Tuple
+from collections.abc import Callable
+from functools import cache
+from typing import Any
 
 from lxml import etree, html
 from lxml.etree import ParserError
-
 
 # 常量（与项目 process 逻辑对齐，完全本地定义）
 # ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ def _remove_all_uids(dom: html.HtmlElement) -> None:
             del node.attrib['data-uid']
 
 
-def _build_uid_map(dom: html.HtmlElement) -> Dict[str, html.HtmlElement]:
+def _build_uid_map(dom: html.HtmlElement) -> dict[str, html.HtmlElement]:
     return {node.get('data-uid'): node for node in dom.iter() if node.get('data-uid')}
 
 
@@ -150,7 +150,7 @@ def _is_semantic_attribute(name: str) -> bool:
 
 def _project_nearest_ancestor_link(
     target: html.HtmlElement,
-    path: List[html.HtmlElement],
+    path: list[html.HtmlElement],
 ) -> None:
     """Project at most one nearest ancestor a[href] onto a model fragment."""
     if target.tag.lower() == "a":
@@ -265,7 +265,7 @@ def is_data_table(table_element: html.HtmlElement) -> bool:
             ancestor = ancestor.getparent()
         return False
 
-    def nodes_in_current_table(xpath: str) -> List[html.HtmlElement]:
+    def nodes_in_current_table(xpath: str) -> list[html.HtmlElement]:
         """执行 XPath，同时排除嵌套表格中的匹配节点。"""
         return [
             node
@@ -493,7 +493,7 @@ def is_meaningful_content(element) -> bool:
     return False
 
 
-@lru_cache(maxsize=None)
+@cache
 def _is_writable_attribute_name(name: str) -> bool:
     """Return whether lxml can write this parsed HTML attribute name back."""
     probe = html.Element('span')
@@ -603,7 +603,7 @@ TABLE_STRUCTURAL_VALUE_ATTRIBUTES = {
 }
 
 
-def _structure_signature(node: html.HtmlElement, depth: int = 0) -> Tuple[Any, ...]:
+def _structure_signature(node: html.HtmlElement, depth: int = 0) -> tuple[Any, ...]:
     """Describe DOM shape while ignoring item-specific text and URL values."""
     if not isinstance(node.tag, str):
         return ('unknown',)
@@ -637,7 +637,7 @@ def _structure_signature(node: html.HtmlElement, depth: int = 0) -> Tuple[Any, .
     return tag, attribute_names, class_tokens, has_text, children
 
 
-def _list_entries(element: html.HtmlElement) -> List[List[html.HtmlElement]]:
+def _list_entries(element: html.HtmlElement) -> list[list[html.HtmlElement]]:
     """Return logical entries, grouping one dl term with its descriptions."""
     children = list(element)
     if element.tag in {'ul', 'ol'}:
@@ -647,8 +647,8 @@ def _list_entries(element: html.HtmlElement) -> List[List[html.HtmlElement]]:
     if element.tag != 'dl':
         return []
 
-    entries: List[List[html.HtmlElement]] = []
-    current_entry: List[html.HtmlElement] = []
+    entries: list[list[html.HtmlElement]] = []
+    current_entry: list[html.HtmlElement] = []
     for child in children:
         if child.tag == 'dt':
             if current_entry:
@@ -664,8 +664,8 @@ def _list_entries(element: html.HtmlElement) -> List[List[html.HtmlElement]]:
     return entries
 
 
-def _consecutive_runs(indices: Set[int]) -> List[List[int]]:
-    runs: List[List[int]] = []
+def _consecutive_runs(indices: set[int]) -> list[list[int]]:
+    runs: list[list[int]] = []
     for index in sorted(indices):
         if not runs or index != runs[-1][-1] + 1:
             runs.append([index])
@@ -698,12 +698,12 @@ def simplify_list(element: html.HtmlElement) -> None:
     entries = _list_entries(element)
     original_count = len(entries)
     if original_count > LIST_REPEAT_COMPRESSION_THRESHOLD:
-        entries_by_signature: Dict[Tuple[Any, ...], List[int]] = defaultdict(list)
+        entries_by_signature: dict[tuple[Any, ...], list[int]] = defaultdict(list)
         for index, entry in enumerate(entries):
             signature = tuple(_structure_signature(node) for node in entry)
             entries_by_signature[signature].append(index)
 
-        keep_indices: Set[int] = set()
+        keep_indices: set[int] = set()
         for indices in entries_by_signature.values():
             if len(indices) <= LIST_REPEAT_COMPRESSION_THRESHOLD:
                 keep_indices.update(indices)
@@ -731,7 +731,7 @@ def simplify_list(element: html.HtmlElement) -> None:
 
 def _strict_table_structure_signature(
     node: html.HtmlElement,
-) -> Tuple[Any, ...]:
+) -> tuple[Any, ...]:
     """Describe exact row structure while ignoring record-specific values."""
     attributes = []
     for name, value in sorted(node.attrib.items()):
@@ -755,7 +755,7 @@ def _strict_table_structure_signature(
     )
 
 
-def _sample_table_row_indices(row_count: int) -> Set[int]:
+def _sample_table_row_indices(row_count: int) -> set[int]:
     """Select first, middle, and last row positions within one structure."""
     size = TABLE_SAMPLE_ROWS_PER_REGION
     middle_start = max(0, (row_count - size) // 2)
@@ -793,11 +793,11 @@ def _table_ellipsis_row(
 
 
 def _select_rows_by_global_structure(
-    rows: List[html.HtmlElement],
-) -> Tuple[Set[int], List[int]]:
+    rows: list[html.HtmlElement],
+) -> tuple[set[int], list[int]]:
     """Sample repeated structures globally without changing DOM row order."""
-    signature_ids: Dict[Tuple[Any, ...], int] = {}
-    rows_by_structure: Dict[int, List[int]] = defaultdict(list)
+    signature_ids: dict[tuple[Any, ...], int] = {}
+    rows_by_structure: dict[int, list[int]] = defaultdict(list)
     row_structure_ids = []
 
     for row_index, row in enumerate(rows):
@@ -823,11 +823,11 @@ def _select_rows_by_global_structure(
 
 
 def _consecutive_omitted_table_runs(
-    omitted_indices: Set[int],
-    structure_ids: List[int],
-) -> List[List[int]]:
+    omitted_indices: set[int],
+    structure_ids: list[int],
+) -> list[list[int]]:
     """Keep separate ellipses for adjacent omitted rows of different shapes."""
-    runs: List[List[int]] = []
+    runs: list[list[int]] = []
     for index in sorted(omitted_indices):
         if (
             not runs
@@ -1162,8 +1162,8 @@ def _inject_model_head(
     return _serialize_document(root)
 
 
-def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: Dict[str, html.HtmlElement],
-                       include_parents: bool = True) -> List[Dict[str, str]]:
+def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: dict[str, html.HtmlElement],
+                       include_parents: bool = True) -> list[dict[str, str]]:
     """获取段落.
 
     content_type 字段：用于标识段落内容的类型，可能的值包括：
@@ -1260,7 +1260,7 @@ def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: Dict[str, html
     for list_element in processing_dom.xpath('.//ul | .//ol | .//dl'):
         list_types[list_element.get('data-uid')] = is_content_list(list_element)
 
-    def clone_structure(path: List[html.HtmlElement]) -> Tuple[html.HtmlElement, html.HtmlElement]:
+    def clone_structure(path: list[html.HtmlElement]) -> tuple[html.HtmlElement, html.HtmlElement]:
         """克隆节点结构."""
         if not path:
             raise ValueError('Path cannot be empty')
@@ -1286,7 +1286,7 @@ def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: Dict[str, html
 
     paragraphs = []
 
-    def process_node(node: html.HtmlElement, path: List[html.HtmlElement]):
+    def process_node(node: html.HtmlElement, path: list[html.HtmlElement]):
         """递归处理节点."""
         current_path = path + [node]
         inline_content = []
@@ -1382,7 +1382,7 @@ def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: Dict[str, html
             except ValueError:
                 pass
 
-    def merge_inline_content(parent: html.HtmlElement, content_list: List[Tuple[str, str]]):
+    def merge_inline_content(parent: html.HtmlElement, content_list: list[tuple[str, str]]):
         """合并内联内容."""
         last_inserted = None
         for idx, (item_type, item) in enumerate(content_list):
@@ -1417,7 +1417,7 @@ def extract_paragraphs(processing_dom: html.HtmlElement, uid_map: Dict[str, html
 
     return unique_paragraphs
 
-def process_paragraphs(paragraphs: List[Dict[str, str]], uid_map: Dict[str, html.HtmlElement], cutoff_length: int = 500) -> Tuple[str, html.HtmlElement]:
+def process_paragraphs(paragraphs: list[dict[str, str]], uid_map: dict[str, html.HtmlElement], cutoff_length: int = 500) -> tuple[str, html.HtmlElement]:
     """处理段落并添加 _item_id，同时在原始DOM的对应元素上添加相同ID.
 
     Args:
@@ -1618,7 +1618,7 @@ def html_to_element(html_str: str) -> html.HtmlElement:
 # 对外接口：simplify_html
 # ---------------------------------------------------------------------------
 
-def simplify_html(html_str: str, cutoff_length: int = 500, remain_head: bool=True) -> Tuple[str, str]:
+def simplify_html(html_str: str, cutoff_length: int = 500, remain_head: bool=True) -> tuple[str, str]:
     """
     将 HTML 简化为适合 LLM 阅读的片段，并得到带 _item_id 的原始结构 HTML（map_html），便于后续按标注映射回原结构。
 
@@ -1714,7 +1714,7 @@ def _remove_internal_annotations(root: html.HtmlElement) -> None:
 def replace_recursive_by_condition(
     root: html.HtmlElement,
     replace_condition: Callable[[html.HtmlElement], bool],
-    semantic_attribute_nodes: Set[html.HtmlElement] | None = None,
+    semantic_attribute_nodes: set[html.HtmlElement] | None = None,
     ) -> html.HtmlElement:
     """
     递归检查 DOM 元素。如果满足条件，则将其内部内容替换为 "..."。
@@ -1762,7 +1762,7 @@ def replace_recursive_by_condition(
 
 
 
-def extract_main_html(map_html: str, response: Dict[str, List[str]]) -> str:
+def extract_main_html(map_html: str, response: dict[str, list[str]]) -> str:
     """
     根据 LLM 返回的 useful_item_id 列表，在保留原始结构的前提下，
     将不在列表中的节点内容用 "..." 代替。
