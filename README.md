@@ -254,21 +254,21 @@ the lightweight Qwen-HTML 4B backbone. The released checkpoint is available at
 
 ## 📊 Reported results
 
-Results from the Co-Scraper paper. Higher is better except `Unex.f`.
+Results from the Co-Scraper paper. Higher is better except $\mathrm{Unex.f}$.
 
 ### SWDE
 
-| Method | Model | Precision | Recall | F1 | Corp | Corf | Unex.f |
+| Method | Model | Precision | Recall | F1 | $\mathrm{Cor}_p$ | $\mathrm{Cor}_f$ | $\mathrm{Unex.f}$ |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | AutoScraper | GPT-4o | 81.56 | 77.55 | 78.00 | ± | 64.78 | 16.71 |
-| VGS* | GPT-4o | 96.92 | 87.56 | 89.77 | ± | ± | ± |
+| VGS | GPT-4o | 96.92 | 87.56 | 89.77 | ± | ± | ± |
 | Co-Scraper | GPT-4o | 90.54 | 90.99 | 90.64 | 75.07 | 88.79 | 10.44 |
 | Co-Scraper | GPT-5.6-Sol | 95.89 | 96.09 | 95.94 | 84.86 | 95.42 | 4.14 |
 | **Co-Scraper** | **Qwen-HTML** | **95.93** | **96.24** | **96.00** | **85.87** | **95.51** | **3.19** |
 
 ### LiveWeb-IE
 
-| Method | Model | Precision | Recall | F1 | Corp | Corf | Unex.f |
+| Method | Model | Precision | Recall | F1 | $\mathrm{Cor}_p$ | $\mathrm{Cor}_f$ | $\mathrm{Unex.f}$ |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | AutoScraper | GPT-4o | 17.79 | 23.66 | 23.22 | ± | 17.64 | 75.35 |
 | VGS | GPT-4o | 47.78 | 52.09 | 48.58 | ± | ± | ± |
@@ -279,9 +279,9 @@ Results from the Co-Scraper paper. Higher is better except `Unex.f`.
 Metrics:
 
 - **F1**: field-level extraction quality.
-- **Corp**: page-level perfect extraction rate.
-- **Corf**: field-level cross-page reuse success rate.
-- **Unex.f**: fraction of fields that produce unexecutable or invalid output.
+- **$\mathrm{Cor}_p$**: page-level perfect extraction rate.
+- **$\mathrm{Cor}_f$**: field-level cross-page reuse success rate.
+- **$\mathrm{Unex.f}$**: fraction of fields that produce unexecutable or invalid output.
 
 This repository does not bundle SWDE or LiveWeb-IE data. Please obtain those datasets
 from their respective sources if you need to reproduce benchmark evaluations.
