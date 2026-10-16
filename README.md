@@ -8,6 +8,8 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](pyproject.toml)
 [![CI](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](pyproject.toml)
+[![arXiv](https://img.shields.io/badge/arXiv-2606.14821-B31B1B)](https://arxiv.org/abs/2606.14821)
+[![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://huggingface.co/Ambition0303/Qwen-HTML)
 
 *Turn three structurally similar seed pages and a JSON Schema into a reusable, executable `WebPageParser`.*
 
@@ -245,7 +247,8 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 
 The default model identifier can be replaced with any OpenAI-compatible model,
 including a local vLLM deployment. The paper's strongest reported configuration uses
-the lightweight Qwen-HTML 4B backbone.
+the lightweight Qwen-HTML 4B backbone. The released checkpoint is available at
+[Ambition0303/Qwen-HTML](https://huggingface.co/Ambition0303/Qwen-HTML).
 
 ---
 
@@ -344,7 +347,9 @@ If you use Co-Scraper, please cite:
   title={Co-Scraper: Query-Aware DOM Pruning and Reusable Scraper Synthesis for Lightweight Web Data Extraction},
   author={Wang, Shoupeng and Qiu, Jiantao and Zhang, Wuyang and He, Conghui},
   year={2026},
-  url={https://github.com/Ambition-0303/Co-Scraper}
+  eprint={2606.14821},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2606.14821}
 }
 ```
 
