@@ -149,7 +149,7 @@ coscraper \
   examples/seed_1.html \
   examples/seed_2.html \
   examples/seed_3.html \
-  --model qwen3.8-flash \
+  --model qwen-html \
   --output-dir outputs/camera
 ```
 
@@ -209,7 +209,7 @@ result = run(
     query,
     schema,
     pages,
-    model="qwen3.8-flash",
+    model="qwen-html",
     base_url="http://localhost:8000/v1",
     api_key="not-required",
     output_dir="outputs/camera",
@@ -234,7 +234,7 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 
 | CLI option | Environment variable | Default | Description |
 | --- | --- | --- | --- |
-| `--model` | — | `qwen3-html` | Model ID exposed by the endpoint |
+| `--model` | — | `qwen-html` | Model ID exposed by the endpoint |
 | `--base-url` | `OPENAI_BASE_URL` | required | OpenAI-compatible API base URL |
 | `--api-key-env` | `OPENAI_API_KEY` | `OPENAI_API_KEY` | Name of the environment variable holding the API key |
 | `--id-max-tokens` | — | `8192` | Maximum tokens for node identification |
@@ -242,7 +242,6 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 | `--timeout` | — | `600` | Request timeout in seconds |
 | `--max-attempts` | — | `3` | Retries per model stage |
 | `--json-mode` | — | off | Request strict JSON output for node identification |
-| `--disable-thinking` | — | off | Omit `reasoning_effort` |
 | `--output-dir` | — | `outputs/coscraper` | Artifact directory |
 
 The default model identifier can be replaced with any OpenAI-compatible model,

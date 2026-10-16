@@ -9,7 +9,7 @@ import time
 from typing import Any
 
 
-DEFAULT_MODEL = "qwen3.8-flash"
+DEFAULT_MODEL = "qwen-html"
 THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
 FENCE_RE = re.compile(r"^```(?:python)?\s*|\s*```$", re.DOTALL | re.IGNORECASE)
 
@@ -90,7 +90,6 @@ def inference(
     max_tokens: int = 8192,
     timeout: float = 600.0,
     max_attempts: int = 3,
-    reasoning_effort: str | None = "low",
     json_mode: bool = False,
 ) -> tuple[str, str]:
     """Call an OpenAI-compatible chat endpoint and return (reasoning, output)."""
@@ -118,8 +117,6 @@ def inference(
         "stream": False,
         "max_tokens": max_tokens,
     }
-    if reasoning_effort:
-        payload["reasoning_effort"] = reasoning_effort
     if json_mode:
         payload["response_format"] = {"type": "json_object"}
 

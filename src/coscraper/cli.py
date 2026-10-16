@@ -35,7 +35,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=float, default=600.0)
     parser.add_argument("--max-attempts", type=int, default=3)
     parser.add_argument("--json-mode", action="store_true")
-    parser.add_argument("--disable-thinking", action="store_true")
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/coscraper"))
     return parser.parse_args()
 
@@ -57,7 +56,6 @@ def cli() -> None:
         code_max_tokens=args.code_max_tokens,
         timeout=args.timeout,
         max_attempts=args.max_attempts,
-        reasoning_effort=None if args.disable_thinking else "low",
         json_mode=args.json_mode,
         output_dir=args.output_dir,
     )

@@ -71,7 +71,6 @@ def run(
     code_max_tokens: int = 32768,
     timeout: float = 600.0,
     max_attempts: int = 3,
-    reasoning_effort: str | None = "low",
     json_mode: bool = False,
     output_dir: str | Path | None = None,
 ) -> dict[str, Any]:
@@ -123,7 +122,6 @@ def run(
             max_tokens=id_max_tokens,
             timeout=timeout,
             max_attempts=max_attempts,
-            reasoning_effort=reasoning_effort,
             json_mode=json_mode,
         )
         useful_ids = normalize_useful_item_ids(output, candidate_ids)
@@ -158,7 +156,6 @@ def run(
         max_tokens=code_max_tokens,
         timeout=timeout,
         max_attempts=max_attempts,
-        reasoning_effort=reasoning_effort,
     )
     generated_code = normalize_and_validate_code(code_output)
     result = {
