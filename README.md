@@ -12,8 +12,6 @@
 [![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://huggingface.co/Ambition0303/Qwen-HTML)
 [![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-RWDE-FFD21E)](https://huggingface.co/datasets/Ambition0303/RWDE)
 
-*Turn three structurally similar seed pages and a JSON Schema into a reusable, executable `WebPageParser`.*
-
 </div>
 
 ---
