@@ -234,7 +234,7 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 
 | CLI option | Environment variable | Default | Description |
 | --- | --- | --- | --- |
-| `--model` | — | `qwen3.8-flash` | Model ID exposed by the endpoint |
+| `--model` | — | `qwen3-html` | Model ID exposed by the endpoint |
 | `--base-url` | `OPENAI_BASE_URL` | required | OpenAI-compatible API base URL |
 | `--api-key-env` | `OPENAI_API_KEY` | `OPENAI_API_KEY` | Name of the environment variable holding the API key |
 | `--id-max-tokens` | — | `8192` | Maximum tokens for node identification |
@@ -258,7 +258,7 @@ Results from the Co-Scraper paper. Higher is better except $\mathrm{Unex.f}$.
 
 ### SWDE
 
-| Method | Model | **$\mathrm{Precision}$** | **$\mathrm{Recall}$** | **$\mathrm{F1}$** | **$\mathrm{Cor}_p$** | **$\mathrm{Cor}_f$** | **$\mathrm{Unex.f}$** |
+| Method | Model | **$\mathrm{Precision}$** | **$\mathrm{Recall}$** | **$\mathrm{F1}$** | **$\mathrm{Cor}_p$** | **$\mathrm{Cor}_f$** | **$\mathrm{Unex.}_f$** |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | AutoScraper | GPT-4o | 81.56 | 77.55 | 78.00 | - | 64.78 | 16.71 |
 | VGS | GPT-4o | 96.92 | 87.56 | 89.77 | - | - | - |
@@ -268,7 +268,7 @@ Results from the Co-Scraper paper. Higher is better except $\mathrm{Unex.f}$.
 
 ### LiveWeb-IE
 
-| Method | Model | **$\mathrm{Precision}$** | **$\mathrm{Recall}$** | **$\mathrm{F1}$** | **$\mathrm{Cor}_p$** | **$\mathrm{Cor}_f$** | **$\mathrm{Unex.f}$** |
+| Method | Model | **$\mathrm{Precision}$** | **$\mathrm{Recall}$** | **$\mathrm{F1}$** | **$\mathrm{Cor}_p$** | **$\mathrm{Cor}_f$** | **$\mathrm{Unex.}_f$** |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | AutoScraper | GPT-4o | 17.79 | 23.66 | 23.22 | - | 17.64 | 75.35 |
 | VGS | GPT-4o | 47.78 | 52.09 | 48.58 | - | - | - |
