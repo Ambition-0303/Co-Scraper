@@ -39,6 +39,8 @@ schema into executable extraction code.
 - **Structure-preserving mapping**: simplified HTML and mapped HTML remain synchronized through stable `_item_id` values.
 - **Three-seed induction**: compares three pages to distinguish stable structure from page-specific noise.
 - **Reusable output**: emits a `WebPageParser` class with a `parse(html_text) -> dict` interface.
+- **URL rendering**: accepts three local HTML files or HTTP(S) URLs and renders URLs with Playwright.
+- **Automatic execution**: runs the generated parser on the three seed pages and saves the results.
 - **OpenAI-compatible**: works with local vLLM, private gateways, or hosted APIs.
 - **No bundled benchmark data**: SWDE and LiveWeb-IE remain separate; no test data or private outputs are redistributed.
 
@@ -48,9 +50,13 @@ schema into executable extraction code.
 
 ```mermaid
 flowchart LR
-    A[Raw seed HTML 1] --> P[Rule-based simplification]
-    B[Raw seed HTML 2] --> P
-    C[Raw seed HTML 3] --> P
+    U[Seed URLs] --> R[Playwright Chromium rendering]
+    R --> A[Raw seed HTML 1]
+    R --> B[Raw seed HTML 2]
+    R --> C[Raw seed HTML 3]
+    A --> P[Rule-based simplification]
+    B --> P
+    C --> P
     Q[Query] --> P
     S[JSON Schema] --> P
 
@@ -76,13 +82,15 @@ flowchart LR
 
 ### Pipeline stages
 
-1. **Pre-processing** removes scripts, styles, resource links, invisible elements, and noisy attributes.
-2. **Block segmentation** converts mixed text/tag structures into content blocks.
-3. **Stable IDs** attach `_item_id` values to simplified and mapped representations.
-4. **Node identification** asks the model to return `useful_item_ids` for answer and support nodes.
-5. **Mapping back** preserves useful subtrees, ancestors, short structural siblings, and replaces irrelevant subtrees with `...`.
-6. **Scraper synthesis** uses the three pruned pages, query, and schema to generate XPath-based Python code.
-7. **Reuse** executes the generated parser directly on new pages from the same structural group.
+1. **URL rendering** uses Playwright Chromium when an input is an HTTP(S) URL; local HTML files are loaded directly.
+2. **Pre-processing** removes scripts, styles, resource links, invisible elements, and noisy attributes.
+3. **Block segmentation** converts mixed text/tag structures into content blocks.
+4. **Stable IDs** attach `_item_id` values to simplified and mapped representations.
+5. **Node identification** asks the model to return `useful_item_ids` for answer and support nodes.
+6. **Mapping back** preserves useful subtrees, ancestors, short structural siblings, and replaces irrelevant subtrees with `...`.
+7. **Scraper synthesis** uses the three pruned pages, query, and schema to generate XPath-based Python code.
+8. **Execution** runs the generated parser on the three seed pages and records each result.
+9. **Reuse** executes the same parser directly on new pages from the same structural group.
 
 ---
 
@@ -104,11 +112,25 @@ For development:
 pip install -e ".[dev]"
 ```
 
+To render seed pages from URLs, install the browser extra and Chromium:
+
+```bash
+pip install -e ".[browser]"
+playwright install chromium
+```
+
+On a minimal Linux system, install Chromium runtime libraries if browser launch fails:
+
+```bash
+playwright install-deps chromium
+```
+
 Requirements:
 
 - Python 3.10+
 - `lxml`
 - An OpenAI-compatible chat-completions endpoint
+- Playwright and Chromium, only when using URL inputs
 
 ---
 
@@ -116,8 +138,9 @@ Requirements:
 
 ### 1. Prepare three seed pages
 
-Use three pages from the same website or structurally similar template. The examples
-in [`examples/`](examples) contain three synthetic camera product pages.
+Use three pages from the same website or structurally similar template. Inputs can be
+local HTML files or HTTP(S) URLs. The examples in [`examples/`](examples) contain three
+synthetic camera product pages.
 
 ### 2. Define the output schema
 
@@ -157,14 +180,37 @@ Generated artifacts:
 
 ```text
 outputs/camera/
-├── result.json                 # full trace, IDs, reasoning, timings
+├── result.json                 # full trace, IDs, reasoning, executions, timings
 ├── generated_code.py           # reusable WebPageParser implementation
+├── execution_results.json      # parser output on the three seed pages
+├── seed_001_input.html         # local input or Playwright-rendered DOM
 ├── seed_001_extracted.html
+├── seed_002_input.html
 ├── seed_002_extracted.html
+├── seed_003_input.html
 └── seed_003_extracted.html
 ```
 
-### 5. Reuse the parser
+To generate code without executing it, add `--no-execute`.
+
+### 5. Generate a scraper from URLs
+
+```bash
+coscraper \
+  "Extract the camera model and price." \
+  examples/schema.json \
+  "https://example.com/products/1" \
+  "https://example.com/products/2" \
+  "https://example.com/products/3" \
+  --model qwen-html \
+  --browser-timeout 45000 \
+  --wait-until networkidle \
+  --output-dir outputs/camera
+```
+
+Local HTML files and URLs can be mixed in the three seed inputs.
+
+### 6. Reuse the parser
 
 Copy or import the generated file, then call its parser:
 
@@ -216,7 +262,10 @@ result = run(
 )
 
 print(result["generated_code"])
+print(result["execution_results"])
 ```
+
+Set `execute=False` when you want to inspect the generated code before running it.
 
 ### Use DOM pruning directly
 
@@ -242,6 +291,9 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 | `--timeout` | — | `600` | Request timeout in seconds |
 | `--max-attempts` | — | `3` | Retries per model stage |
 | `--json-mode` | — | off | Request strict JSON output for node identification |
+| `--browser-timeout` | — | `30000` | Playwright navigation timeout in milliseconds |
+| `--wait-until` | — | `networkidle` | Playwright wait condition |
+| `--no-execute` | — | off | Generate code without executing it on seed pages |
 | `--output-dir` | — | `outputs/coscraper` | Artifact directory |
 
 The default model identifier can be replaced with any OpenAI-compatible model,
@@ -309,7 +361,8 @@ coscraper --help
 - Never commit API keys, cookies, session tokens, or private paths.
 - Respect each website's terms of service, `robots.txt`, rate limits, and copyright.
 - Do not use generated scrapers to bypass authentication, access controls, or anti-abuse protections.
-- Generated code executes on your machine; inspect it before running it on untrusted model outputs.
+- Generated code executes in the current process by default; inspect it first or use `--no-execute` with untrusted models.
+- For untrusted models or websites, run Co-Scraper inside a disposable container or another isolation boundary.
 
 ---
 
@@ -322,8 +375,10 @@ coscraper --help
 │   ├── schema.json
 │   └── seed_{1,2,3}.html
 ├── src/coscraper/
+│   ├── browser.py
 │   ├── cli.py
 │   ├── dom.py
+│   ├── execution.py
 │   ├── inference.py
 │   ├── pipeline.py
 │   └── prompts.py
@@ -359,8 +414,7 @@ If you use Co-Scraper, please cite:
 
 - [ ] PyPI release
 - [ ] Batch CLI for many three-page groups
-- [ ] Generated-code sandbox runner
-- [ ] Optional browser rendering adapter
+- [ ] Sandboxed generated-code runner
 - [ ] More multilingual HTML examples
 - [ ] Benchmark reproduction guide
 

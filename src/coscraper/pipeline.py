@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from .dom import ITEM_ID_ATTR, _parse_document, extract_main_html, simplify_html
+from .execution import execute_generated_code
 from .inference import (
     DEFAULT_MODEL,
     PipelineError,
@@ -40,7 +41,7 @@ def sha256_text(text: str) -> str:
 
 
 def write_outputs(result: dict[str, Any], output_dir: str | Path) -> dict[str, str]:
-    """Persist the complete result, generated code, and extracted seed HTML."""
+    """Persist the complete result, generated code, rendered HTML, and executions."""
     directory = Path(output_dir)
     directory.mkdir(parents=True, exist_ok=True)
     paths = {
@@ -48,9 +49,19 @@ def write_outputs(result: dict[str, Any], output_dir: str | Path) -> dict[str, s
         "generated_code": directory / "generated_code.py",
     }
     for index, page in enumerate(result["pages"], start=1):
-        path = directory / f"seed_{index:03d}_extracted.html"
-        path.write_text(page["extracted_html"], encoding="utf-8")
-        paths[f"seed_{index:03d}_extracted_html"] = str(path)
+        input_path = directory / f"seed_{index:03d}_input.html"
+        input_path.write_text(page["raw_html"], encoding="utf-8")
+        paths[f"seed_{index:03d}_input_html"] = str(input_path)
+        extracted_path = directory / f"seed_{index:03d}_extracted.html"
+        extracted_path.write_text(page["extracted_html"], encoding="utf-8")
+        paths[f"seed_{index:03d}_extracted_html"] = str(extracted_path)
+    if "execution_results" in result:
+        execution_path = directory / "execution_results.json"
+        execution_path.write_text(
+            json.dumps(result["execution_results"], ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        paths["execution_results"] = str(execution_path)
     result["outputs"] = {name: str(path) for name, path in paths.items()}
     paths["result"].write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
@@ -65,6 +76,7 @@ def run(
     schema: dict[str, Any],
     htmls: Sequence[str],
     *,
+    sources: Sequence[str] | None = None,
     model: str = DEFAULT_MODEL,
     base_url: str | None = None,
     api_key: str | None = None,
@@ -73,6 +85,7 @@ def run(
     timeout: float = 600.0,
     max_attempts: int = 3,
     json_mode: bool = False,
+    execute: bool = True,
     output_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Run query-aware pruning and synthesize a reusable scraper.
@@ -81,7 +94,9 @@ def run(
         query: Natural-language extraction request.
         schema: JSON Schema describing the desired output object.
         htmls: Exactly three structurally similar seed HTML documents.
+        sources: Optional original input paths or URLs, one per seed page.
         model: Model ID exposed by the OpenAI-compatible endpoint.
+        execute: Whether to execute the generated parser on the seed documents.
         base_url: API base URL. Defaults to ``OPENAI_BASE_URL``.
         api_key: API key. Defaults to ``OPENAI_API_KEY``.
         output_dir: Optional directory for result artifacts.
@@ -99,6 +114,13 @@ def run(
         raise ValueError("exactly three seed HTML documents are required")
     if any(not isinstance(document, str) or not document.strip() for document in documents):
         raise ValueError("each seed HTML must be a non-empty string")
+    page_sources = (
+        list(sources)
+        if sources is not None
+        else [str(index) for index in range(1, 4)]
+    )
+    if len(page_sources) != 3:
+        raise ValueError("sources must contain exactly three entries")
 
     started = time.perf_counter()
     schema_text = json.dumps(schema, ensure_ascii=False, separators=(",", ":"))
@@ -131,6 +153,8 @@ def run(
             raise PipelineError(f"seed HTML {index}: extracted HTML is empty")
         pages.append({
             "index": index,
+            "source": page_sources[index - 1],
+            "raw_html": raw_html,
             "raw_sha256": sha256_text(raw_html),
             "simplified_html": simplified_html,
             "mapped_html": map_html,
@@ -159,6 +183,16 @@ def run(
         max_attempts=max_attempts,
     )
     generated_code = normalize_and_validate_code(code_output)
+    code_elapsed_seconds = round(time.perf_counter() - code_started, 3)
+    execution_results = None
+    execution_elapsed_seconds = 0.0
+    if execute:
+        execution_results = execute_generated_code(generated_code, documents)
+        for execution_result, source in zip(execution_results, page_sources, strict=True):
+            execution_result["source"] = source
+        execution_elapsed_seconds = round(
+            sum(item["elapsed_seconds"] for item in execution_results), 3
+        )
     result = {
         "query": query,
         "schema": schema,
@@ -166,8 +200,10 @@ def run(
         "pages": pages,
         "code_reasoning": code_reasoning,
         "generated_code": generated_code,
+        "execution_results": execution_results,
+        "execution_elapsed_seconds": execution_elapsed_seconds,
         "id_elapsed_seconds": round(sum(page["elapsed_seconds"] for page in pages), 3),
-        "code_elapsed_seconds": round(time.perf_counter() - code_started, 3),
+        "code_elapsed_seconds": code_elapsed_seconds,
         "total_elapsed_seconds": round(time.perf_counter() - started, 3),
     }
     if output_dir is not None:
