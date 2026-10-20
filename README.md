@@ -110,7 +110,7 @@ flowchart LR
 Install from source:
 
 ```bash
-git clone https://github.com/Ambition-0303/Co-Scraper.git
+git clone https://path/to/Co-Scraper.git
 cd Co-Scraper
 python -m venv .venv
 source .venv/bin/activate
