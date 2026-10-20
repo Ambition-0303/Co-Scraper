@@ -8,9 +8,8 @@
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](pyproject.toml)
 [![CI](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](pyproject.toml)
-[![arXiv](https://img.shields.io/badge/arXiv-2606.14821-B31B1B)](https://arxiv.org/abs/2606.14821)
-[![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://huggingface.co/Ambition0303/Qwen-HTML)
-[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-RWDE-FFD21E)](https://huggingface.co/datasets/Ambition0303/RWDE)
+[![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://anonymous-hf.com/a/mu3yikgac8ng/)
+[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-RWDE-FFD21E)](https://anonymous-hf.com/a/invjmdms30h7/)
 
 </div>
 
