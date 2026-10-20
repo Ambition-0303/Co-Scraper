@@ -402,25 +402,6 @@ coscraper --help
 └── pyproject.toml
 ```
 
----
-
-## 📚 Citation
-
-If you use Co-Scraper, please cite:
-
-```bibtex
-@misc{wang2026coscraper,
-  title={Co-Scraper: Query-Aware DOM Pruning and Reusable Scraper Synthesis for Lightweight Web Data Extraction},
-  author={Wang, Shoupeng and Qiu, Jiantao and Zhang, Wuyang and He, Conghui},
-  year={2026},
-  eprint={2606.14821},
-  archivePrefix={arXiv},
-  url={https://arxiv.org/abs/2606.14821}
-}
-```
-
-If you use RWDE, please also reference the [RWDE dataset](https://huggingface.co/datasets/Ambition0303/RWDE)
-together with the Co-Scraper paper.
 
 ---
 
