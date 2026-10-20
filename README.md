@@ -47,7 +47,7 @@ schema into executable extraction code.
 ## 🤗 RWDE dataset
 
 The RWDE webpage information extraction dataset used to train Qwen-HTML is available
-on Hugging Face at [Ambition0303/RWDE](https://huggingface.co/datasets/Ambition0303/RWDE).
+on Hugging Face.
 
 RWDE contains 184 sites, 462 page-structure groups, and 643 extraction queries. It
 provides raw and processed HTML, reference XPath locators, node-identification
