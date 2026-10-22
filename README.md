@@ -9,7 +9,6 @@
 [![CI](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/Ambition-0303/Co-Scraper/actions/workflows/ci.yml)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](pyproject.toml)
 [![Model](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Qwen--HTML--4B-FFD21E)](https://anonymous-hf.com/a/mu3yikgac8ng/)
-[![Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-RWDE-FFD21E)](https://anonymous-hf.com/a/invjmdms30h7/)
 
 </div>
 
@@ -45,9 +44,6 @@ schema into executable extraction code.
 ---
 
 ## 🤗 RWDE dataset
-
-The RWDE webpage information extraction dataset used to train Qwen-HTML is available
-on Hugging Face.
 
 RWDE contains 184 sites, 462 page-structure groups, and 643 extraction queries. It
 provides raw and processed HTML, reference XPath locators, node-identification
@@ -310,7 +306,7 @@ extracted = extract_main_html(mapped, {"useful_item_ids": ["1", "3"]})
 The default model identifier can be replaced with any OpenAI-compatible model,
 including a local vLLM deployment. The paper's strongest reported configuration uses
 the lightweight Qwen-HTML 4B backbone. The released checkpoint is available at
-[Ambition0303/Qwen-HTML](https://huggingface.co/Ambition0303/Qwen-HTML).
+huggingface.
 
 ---
 
