@@ -319,10 +319,10 @@ Results from the Co-Scraper paper. Higher is better except $\mathrm{Unex.f}$.
 | Method | Model | **$\mathrm{Precision}$** | **$\mathrm{Recall}$** | **$\mathrm{F1}$** | **$\mathrm{Cor}_p$** | **$\mathrm{Cor}_f$** | **$\mathrm{Unex.}_f$** |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | AutoScraper | GPT-4o | 81.56 | 77.55 | 78.00 | - | 64.78 | 16.71 |
-| VGS | GPT-4o | 96.92 | 87.56 | 89.77 | - | - | - |
+| VGS | GPT-4o | **96.92** | 87.56 | 89.77 | - | - | - |
 | Co-Scraper | GPT-4o | 90.54 | 90.99 | 90.64 | 75.07 | 88.79 | 10.44 |
 | Co-Scraper | GPT-5.6-Sol | 95.89 | 96.09 | 95.94 | 84.86 | 95.42 | 4.14 |
-| Co-Scraper | Qwen-HTML | **95.93** | **96.24** | **96.00** | **85.87** | **95.51** | **3.19** |
+| Co-Scraper | Qwen-HTML | 95.93 | **96.24** | **96.00** | **85.87** | **95.51** | **3.19** |
 
 ### LiveWeb-IE
 
